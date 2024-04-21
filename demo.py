@@ -1,5 +1,6 @@
 import pygame
 import random
+import sys
 
 pygame.init()
 
@@ -10,10 +11,60 @@ window_height = 600
 window = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption("Snake Game")
 
-# Setting up game variables
+# Colors
 white = (255,255,255)
 black = (0,0,0,0)
 red = (255,0,0)
+grey = (200, 200, 200)
+
+# Function to display a popup
+def show_popup(message, score):
+    popup_width = 300
+    popup_height = 150
+    
+    # Create a surface for the popup window
+    popup_surface = pygame.Surface((popup_width, popup_height))
+    popup_surface.fill(white)
+    
+    # Draw a border around the popup
+    pygame.draw.rect(popup_surface, black, (0, 0, popup_width, popup_height), 2)
+    
+    # Render the message text
+    font = pygame.font.Font(None, 25)
+    # text = font.render(message, True, black)
+    text = font_style.render(message, True, black)
+    score_text = font_style.render(f"Score: {score}", True, black)
+    window.blit(score_text,[10,10])
+    
+    # Center the text on the popup surface
+    text_rect = text.get_rect(center=(popup_width // 2, (popup_height // 2 ) - 15))
+    score_text_rect = score_text.get_rect(center=(popup_width // 2, (popup_height // 2) + 15))
+    popup_surface.blit(text, text_rect)
+    popup_surface.blit(score_text, score_text_rect)
+    
+    # Position the popup in the center of the screen
+    popup_x = (window_width - popup_width) // 2
+    popup_y = (window_height - popup_height) // 2
+    
+    # Main loop for the popup
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                # sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+        
+        # Draw the popup on the main screen
+        window.blit(popup_surface, (popup_x, popup_y))
+        pygame.display.flip()
+
+
+
+
+# Setting up game variables
 
 speed = 10
 score = 0
@@ -65,6 +116,8 @@ while not game_over:
 
   # Boundary Conditions
   if x1 >= window_width or x1<0 or y1>=window_height or y1<0:
+    # Game over
+    show_popup("Game Over", score)
     game_over = True
 
   # Fill background
@@ -84,6 +137,8 @@ while not game_over:
   # If snake eats itself 
   for segment in snake_body[:-1]:
     if segment == snake_head:
+      # Game over
+      show_popup("Game Over", score)
       game_over = True
   
   # Display Score
